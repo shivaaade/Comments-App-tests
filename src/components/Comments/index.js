@@ -37,9 +37,9 @@ class Comments extends Component {
       id: uuidv4(),
       name,
       text,
-      isLiked: false,
+      isLiked: true,
       likeUrl:
-        'https://assets.ccbp.in/frontend/react-js/comments-app/liked-img.png',
+        'https://assets.ccbp.in/frontend/react-js/comments-app/like-img.png',
       deleteUrl:
         'https://assets.ccbp.in/frontend/react-js/comments-app/delete-img.png',
     }
@@ -51,27 +51,44 @@ class Comments extends Component {
     }))
   }
 
+  deleteCommentMain = id => {
+    const {comments} = this.state
+    const filterList = comments.filter(each => each.id !== id)
+    this.setState(prev => ({comments: filterList, count: prev.count - 1}))
+  }
+
+  changeLikeMain = id => {
+    this.setState(prev => ({
+      comments: prev.comments.map(each => {
+        if (each.id === id) {
+          return {...each, isLiked: !each.isLiked}
+        }
+        return each
+      }),
+    }))
+  }
+
   render() {
     const {comments, name, text, count} = this.state
-    let disadd
-    if (count === 0) {
-      disadd = 'displayItem'
-    } else {
-      disadd = ''
-    }
 
     return (
       <div>
         <h1>Comments</h1>
         <p>say something about 4.0 technology</p>
-        <input placeholder="Your Name" onChange={this.onInput} type="text" />
+        <input
+          value={name}
+          placeholder="Your Name"
+          onChange={this.onInput}
+          type="text"
+        />
         <textarea
+          value={text}
           placeholder="Your Comment"
           rows="10"
           cols="40"
           onChange={this.onText}
         >
-          shiva
+          ``
         </textarea>
         <img
           alt="comments"
@@ -83,7 +100,12 @@ class Comments extends Component {
         <p>{count} comments</p>
         <ul>
           {comments.map(each => (
-            <Welcome key={each.id} commentsType={each} />
+            <Welcome
+              changeLikeMain={this.changeLikeMain}
+              key={each.id}
+              deleteCommentMain={this.deleteCommentMain}
+              commentsType={each}
+            />
           ))}
         </ul>
       </div>
